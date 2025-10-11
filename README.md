@@ -61,7 +61,7 @@ This system digitizes the manual file management process — allowing users to s
 
 * **Frontend:** HTML, CSS, JavaScript, Bootstrap
 * **Backend:** Python, Django Framework
-* **Database:** SQLite / PostgreSQL
+* **Database:** SQLite / MYSQL
 * **Libraries Used:**
 
   * `PyPDF2` – PDF read, write, merge, encryption
