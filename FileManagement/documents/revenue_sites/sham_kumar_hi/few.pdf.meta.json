@@ -1,0 +1,37 @@
+{
+  "document_info": {
+    "title": "few",
+    "full_name": "sham_kumar_hi",
+    "merge_date": "2025-09-22T20:51:36.015521",
+    "merged_by": "admin"
+  },
+  "files": [
+    {
+      "original_name": "QR_NOKIA_WALA.png",
+      "custom_name": "few",
+      "type": ".png",
+      "pages": 1,
+      "hash": "637bd8a4a89a447060e1ea3bb35b7edb",
+      "offset": 0,
+      "length": 1
+    },
+    {
+      "original_name": "generated-image.png",
+      "custom_name": "ju",
+      "type": ".png",
+      "pages": 1,
+      "hash": "5cc69fa0a6a58d3d64cdfdcb1ba0425a",
+      "offset": 1,
+      "length": 1
+    },
+    {
+      "original_name": "generated-image.png",
+      "custom_name": "wr",
+      "type": ".png",
+      "pages": 1,
+      "hash": "5cc69fa0a6a58d3d64cdfdcb1ba0425a",
+      "offset": 2,
+      "length": 1
+    }
+  ]
+}

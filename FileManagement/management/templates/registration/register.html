@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    {% trans 'वापरकर्ता नोंदणी / User Registration' %}
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="id_username" class="form-label bilingual-label">
+                                    {% trans 'वापरकर्तानाव / Username' %}
+                                </label>
+                                {{ form.username }}
+                                {% for error in form.username.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_full_name" class="form-label bilingual-label">
+                                    {% trans 'पूर्ण नाव / Full Name' %}
+                                </label>
+                                {{ form.full_name }}
+                                {% for error in form.full_name.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_email" class="form-label bilingual-label">
+                                    {% trans 'ईमेल / Email' %}
+                                </label>
+                                {{ form.email }}
+                                {% for error in form.email.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_mobile_number" class="form-label bilingual-label">
+                                    {% trans 'मोबाइल नंबर / Mobile Number' %}
+                                </label>
+                                {{ form.mobile_number }}
+                                {% for error in form.mobile_number.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="id_division" class="form-label bilingual-label">
+                                    {% trans 'विभाग / Division' %}
+                                </label>
+                                {{ form.division }}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_district" class="form-label bilingual-label">
+                                    {% trans 'जिल्हा / District' %}
+                                </label>
+                                {{ form.district }}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_taluka" class="form-label bilingual-label">
+                                    {% trans 'तालुका / Taluka' %}
+                                </label>
+                                {{ form.taluka }}
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="id_village" class="form-label bilingual-label">
+                                    {% trans 'गाव / Village' %}
+                                </label>
+                                {{ form.village }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="id_password1" class="form-label bilingual-label">
+                                    {% trans 'पासवर्ड / Password' %}
+                                </label>
+                                {{ form.password1 }}
+                                {% for error in form.password1.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="id_password2" class="form-label bilingual-label">
+                                    {% trans 'पासवर्ड पुष्टीकरण / Confirm Password' %}
+                                </label>
+                                {{ form.password2 }}
+                                {% for error in form.password2.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-person-plus"></i> {% trans 'नोंदणी करा / Register' %}
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="mt-3 text-center">
+                    <p>
+                        {% trans 'आधीपासून नोंदणी झाली आहे? / Already registered?' %}
+                        <a href="{% url 'login' %}">
+                            {% trans 'येथे लॉगिन करा / Login here' %}
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

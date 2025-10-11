@@ -1,0 +1,28 @@
+{
+  "document_info": {
+    "title": "wde",
+    "full_name": "papukumar",
+    "merge_date": "2025-09-26T16:42:57.822163",
+    "merged_by": "admin"
+  },
+  "files": [
+    {
+      "original_name": "download (admin).jpeg",
+      "custom_name": "sad",
+      "type": ".jpeg",
+      "pages": 1,
+      "hash": "265695b92f5bf1e679069366d7dda335",
+      "offset": 0,
+      "length": 1
+    },
+    {
+      "original_name": "map.png",
+      "custom_name": "scsca",
+      "type": ".png",
+      "pages": 1,
+      "hash": "c197d275d87ef4e4dd1e8c42ecbdc25b",
+      "offset": 1,
+      "length": 1
+    }
+  ]
+}

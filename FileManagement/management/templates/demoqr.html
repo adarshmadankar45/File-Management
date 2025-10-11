@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .description {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .qr-container {
+            margin: 30px 0;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            display: inline-block;
+        }
+
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .instructions {
+            text-align: left;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 25px;
+        }
+
+        .instructions h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .instructions ol {
+            padding-left: 20px;
+            color: #555;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .footer {
+            margin-top: 25px;
+            color: #888;
+            font-size: 14px;
+        }
+
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>QR Code Generator</h1>
+        <p class="description">Scan the QR code below to access the Google Drive folder</p>
+
+        <div class="qr-container">
+            <div id="qrcode"></div>
+        </div>
+
+        <div class="instructions">
+            <h3>How to use:</h3>
+            <ol>
+                <li>Open the camera app or a QR code scanner on your mobile device</li>
+                <li>Point your camera at the QR code above</li>
+                <li>Tap on the notification that appears to open the Google Drive folder</li>
+            </ol>
+        </div>
+
+        <div class="footer">
+            Scan the QR code to open the Google Drive folder directly
+        </div>
+    </div>
+
+    <!-- Include QRCode.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script>
+        // Generate QR code
+        const googleDriveLink = "https://drive.google.com/drive/folders/1ErjxRfUwZ26QvTPrR0-AnX1sNSBuKM15?usp=sharing";
+
+        // Create QR code element
+        const qrcodeElement = document.getElementById('qrcode');
+
+        // Generate QR code
+        QRCode.toCanvas(qrcodeElement, googleDriveLink, {
+            width: 200,
+            margin: 1,
+            color: {
+                dark: '#000000',
+                light: '#ffffff'
+            }
+        }, function (error) {
+            if (error) {
+                console.error(error);
+                // Fallback if QR code generation fails
+                qrcodeElement.innerHTML = `
+                    <div style="color: red; text-align: center;">
+                        <p>QR Code failed to load. Please refresh the page.</p>
+                        <p>Alternative: Use this link:</p>
+                        <a href="${googleDriveLink}" style="color: #2575fc; word-break: break-all;">${googleDriveLink}</a>
+                    </div>
+                `;
+            } else {
+                console.log('QR code generated successfully!');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,531 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">{% trans 'Create Revenue Site' %}</h3>
+    </div>
+    <div class="card-body">
+
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            <strong>{% trans 'Please correct the following errors:' %}</strong>
+            <ul>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ field.label }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" id="revenueSiteForm">
+            {% csrf_token %}
+
+            <!-- Tab Navigation -->
+            <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="personal-tab" data-bs-toggle="tab" data-bs-target="#personal-pane" type="button" role="tab" aria-controls="personal-pane" aria-selected="true">
+                        {% trans 'Personal Details' %}
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="official-tab" data-bs-toggle="tab" data-bs-target="#official-pane" type="button" role="tab" aria-controls="official-pane" aria-selected="false">
+                        {% trans 'Official Details' %}
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="documentation-tab" data-bs-toggle="tab" data-bs-target="#documentation-pane" type="button" role="tab" aria-controls="documentation-pane" aria-selected="false">
+                        {% trans 'Documentation' %}
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="myTabContent">
+
+                <!-- Tab 1: Personal Details -->
+                <div class="tab-pane fade show active" id="personal-pane" role="tabpanel" aria-labelledby="personal-tab">
+                    <div class="row">
+                        <!-- Full Name -->
+                        <div class="col-md-6 mb-3">
+                            <label for="id_full_name" class="form-label">{% trans 'पूर्ण नाव / Full Name' %}</label>
+                            <input type="text" class="form-control" id="id_full_name" name="full_name"
+                                   value="{{ form.full_name.value|default_if_none:'' }}" maxlength="150" required>
+                            {% if form.full_name.errors %}
+                            <div class="text-danger">{{ form.full_name.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Email -->
+                        <div class="col-md-6 mb-3">
+                            <label for="id_email" class="form-label">{% trans 'ईमेल / Email' %}</label>
+                            <input type="email" class="form-control" id="id_email" name="email"
+                                   value="{{ form.email.value|default_if_none:'' }}" required>
+                            {% if form.email.errors %}
+                            <div class="text-danger">{{ form.email.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Mobile Number -->
+                        <div class="col-md-6 mb-3">
+                            <label for="id_mobile_number" class="form-label">{% trans 'मोबाइल नंबर / Mobile Number' %}</label>
+                            <input type="text" class="form-control" id="id_mobile_number" name="mobile_number"
+                                   value="{{ form.mobile_number.value|default_if_none:'' }}" maxlength="15" required>
+                            {% if form.mobile_number.errors %}
+                            <div class="text-danger">{{ form.mobile_number.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="button" class="btn btn-primary next-tab" data-next-tab="official">
+                            {% trans 'Next' %} <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Official Details -->
+                <div class="tab-pane fade" id="official-pane" role="tabpanel" aria-labelledby="official-tab">
+                    <div class="row">
+                        <!-- City Survey Number -->
+                        <div class="col-md-6 mb-3">
+                            <label for="id_nagar_bhumapan_kramank" class="form-label">{% trans 'नगर भूमापन क्रमांक / City Survey Number' %}</label>
+                            <input type="text" class="form-control" id="id_nagar_bhumapan_kramank" name="nagar_bhumapan_kramank"
+                                   value="{{ form.nagar_bhumapan_kramank.value|default_if_none:'' }}" maxlength="100" required>
+                            {% if form.nagar_bhumapan_kramank.errors %}
+                            <div class="text-danger">{{ form.nagar_bhumapan_kramank.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Seat Number -->
+                        <div class="col-md-6 mb-3">
+                            <label for="id_seat_no" class="form-label">{% trans 'सीट क्रमांक / Seat Number' %}</label>
+                            <input type="text" class="form-control" id="id_seat_no" name="seat_no"
+                                   value="{{ form.seat_no.value|default_if_none:'' }}" maxlength="50" required>
+                            {% if form.seat_no.errors %}
+                            <div class="text-danger">{{ form.seat_no.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Plot Number -->
+                        <div class="col-md-6 mb-3">
+                            <label for="id_plot_no" class="form-label">{% trans 'प्लॉट क्रमांक / Plot Number' %}</label>
+                            <input type="text" class="form-control" id="id_plot_no" name="plot_no"
+                                   value="{{ form.plot_no.value|default_if_none:'' }}" maxlength="50" required>
+                            {% if form.plot_no.errors %}
+                            <div class="text-danger">{{ form.plot_no.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Square Feet -->
+                        <div class="col-md-6 mb-3">
+                            <label for="id_square_feet" class="form-label">{% trans 'चौरस फुट / Square Feet' %}</label>
+                            <input type="number" step="0.01" class="form-control" id="id_square_feet" name="square_feet"
+                                   value="{{ form.square_feet.value|default_if_none:'' }}" required>
+                            {% if form.square_feet.errors %}
+                            <div class="text-danger">{{ form.square_feet.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Ownership Type -->
+                        <div class="col-md-6 mb-3">
+                            <label for="id_dharna_dhikhar" class="form-label">{% trans 'धरणा धिकार / Ownership Type' %}</label>
+                            <input type="text" class="form-control" id="id_dharna_dhikhar" name="dharna_dhikhar"
+                                   value="{{ form.dharna_dhikhar.value|default_if_none:'' }}" maxlength="100" required>
+                            {% if form.dharna_dhikhar.errors %}
+                            <div class="text-danger">{{ form.dharna_dhikhar.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Ward -->
+                        <div class="col-md-6 mb-3">
+                            <label for="id_ward" class="form-label">{% trans 'वार्ड / Ward' %}</label>
+                            <select class="form-control" id="id_ward" name="ward" required>
+                                <option value="">{% trans 'Select Ward' %}</option>
+                                {% for ward in form.ward.field.queryset %}
+                                <option value="{{ ward.id }}" {% if form.ward.value == ward.id %}selected{% endif %}>{{ ward.ward_number }} - {{ ward.ward_name }}</option>
+                                {% endfor %}
+                            </select>
+                            {% if form.ward.errors %}
+                            <div class="text-danger">{{ form.ward.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Drawer -->
+                        <div class="col-md-6 mb-3">
+                            <label for="id_drawer" class="form-label">{% trans 'ड्रॉवर / Drawer' %}</label>
+                            <select class="form-control" id="id_drawer" name="drawer">
+                                <option value="">{% trans 'Select Drawer' %}</option>
+                                {% for drawer in form.drawer.field.queryset %}
+                                <option value="{{ drawer.id }}" {% if form.drawer.value == drawer.id %}selected{% endif %}>{{ drawer.drawer_number }}</option>
+                                {% endfor %}
+                            </select>
+                            {% if form.drawer.errors %}
+                            <div class="text-danger">{{ form.drawer.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Compartment -->
+                        <div class="col-md-6 mb-3">
+                            <label for="id_compartment" class="form-label">{% trans 'कंपार्टमेंट / Compartment' %}</label>
+                            <select class="form-control" id="id_compartment" name="compartment">
+                                <option value="">{% trans 'Select Compartment' %}</option>
+                                {% for compartment in form.compartment.field.queryset %}
+                                <option value="{{ compartment.id }}" {% if form.compartment.value == compartment.id %}selected{% endif %}>{{ compartment.compartment_number }}</option>
+                                {% endfor %}
+                            </select>
+                            {% if form.compartment.errors %}
+                            <div class="text-danger">{{ form.compartment.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- File Number (Read-only, auto-generated) -->
+                        <div class="col-md-6 mb-3">
+                            <label for="id_file_no" class="form-label">{% trans 'फाईल क्रमांक / File Number' %}</label>
+                            <input type="text" class="form-control" id="id_file_no" name="file_no"
+                                   value="{% trans 'Auto-generated after save' %}" readonly>
+                        </div>
+
+                        <!-- Division -->
+                        <div class="col-md-6 mb-3">
+                            <label for="id_division" class="form-label">{% trans 'विभाग / Division' %}</label>
+                            <select class="form-control" id="id_division" name="division" {% if form.division.field.disabled %}disabled{% endif %}>
+                                {% for value, label in form.division.field.choices %}
+                                <option value="{{ value }}" {% if form.division.value == value %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                            {% if form.division.errors %}
+                            <div class="text-danger">{{ form.division.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- District -->
+                        <div class="col-md-6 mb-3">
+                            <label for="id_district" class="form-label">{% trans 'जिल्हा / District' %}</label>
+                            <input type="text" class="form-control" id="id_district" name="district"
+                                   value="{{ form.district.value|default_if_none:'' }}" maxlength="100" required>
+                            {% if form.district.errors %}
+                            <div class="text-danger">{{ form.district.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Taluka -->
+                        <div class="col-md-6 mb-3">
+                            <label for="id_taluka" class="form-label">{% trans 'तालुका / Taluka' %}</label>
+                            <input type="text" class="form-control" id="id_taluka" name="taluka"
+                                   value="{{ form.taluka.value|default_if_none:'' }}" maxlength="100" required>
+                            {% if form.taluka.errors %}
+                            <div class="text-danger">{{ form.taluka.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Village -->
+                        <div class="col-md-6 mb-3">
+                            <label for="id_village" class="form-label">{% trans 'गाव / Village' %}</label>
+                            <input type="text" class="form-control" id="id_village" name="village"
+                                   value="{{ form.village.value|default_if_none:'' }}" maxlength="100" required>
+                            {% if form.village.errors %}
+                            <div class="text-danger">{{ form.village.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <button type="button" class="btn btn-secondary previous-tab" data-previous-tab="personal">
+                            <i class="fas fa-arrow-left"></i> {% trans 'Previous' %}
+                        </button>
+                        <button type="button" class="btn btn-primary next-tab" data-next-tab="documentation">
+                            {% trans 'Next' %} <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tab 3: Documentation -->
+                <div class="tab-pane fade" id="documentation-pane" role="tabpanel" aria-labelledby="documentation-tab">
+                    <div class="row">
+                        <!-- Document Title -->
+                        <div class="col-md-6 mb-3">
+                            <label for="id_document_title" class="form-label">{% trans 'दस्तऐवजाचे शीर्षक / Document Title' %}</label>
+                            <input type="text" class="form-control" id="id_document_title" name="document_title"
+                                   value="{{ form.document_title.value|default_if_none:'' }}" maxlength="200">
+                            {% if form.document_title.errors %}
+                            <div class="text-danger">{{ form.document_title.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Remarks -->
+                        <div class="col-md-12 mb-3">
+                            <label for="id_remarks" class="form-label">{% trans 'टिप्पण्या / Remarks' %}</label>
+                            <textarea class="form-control" id="id_remarks" name="remarks" rows="3">{{ form.remarks.value|default_if_none:'' }}</textarea>
+                            {% if form.remarks.errors %}
+                            <div class="text-danger">{{ form.remarks.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Document List Section -->
+                        <div class="col-12 mb-4">
+                            <h5>{% trans 'Document List' %}</h5>
+                            <div id="documentList">
+                                <div class="document-item row mb-3">
+                                    <div class="col-md-5">
+                                        <input type="text" class="form-control" name="filename[]" placeholder="Document Name (e.g., Aadhar Card)" required>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <input type="file" class="form-control" name="uploadfile[]" accept="*" required>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-danger remove-document">Remove</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" id="addMore" class="btn btn-secondary mt-2">{% trans 'Add More Documents' %}</button>
+                        </div>
+
+                        <!-- Hidden field for merged document -->
+                        <input type="hidden" id="merged_document_path" name="merged_document_path">
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <button type="button" class="btn btn-secondary previous-tab" data-previous-tab="official">
+                            <i class="fas fa-arrow-left"></i> {% trans 'Previous' %}
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> {% trans 'Save' %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end mt-4">
+                <a href="{% url 'list' %}" class="btn btn-secondary me-2">{% trans 'Cancel' %}</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Bootstrap tabs
+    const tabEl = document.querySelector('#myTab');
+    const tab = new bootstrap.Tab(tabEl);
+
+    // Add more documents
+    document.getElementById('addMore').addEventListener('click', function() {
+        const newItem = document.createElement('div');
+        newItem.className = 'document-item row mb-3';
+        newItem.innerHTML = `
+            <div class="col-md-5">
+                <input type="text" class="form-control" name="filename[]" placeholder="Document Name" required>
+            </div>
+            <div class="col-md-5">
+                <input type="file" class="form-control" name="uploadfile[]" accept="*" required>
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-danger remove-document">Remove</button>
+            </div>
+        `;
+        document.getElementById('documentList').appendChild(newItem);
+    });
+
+    // Remove document
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-document')) {
+            e.target.closest('.document-item').remove();
+        }
+    });
+
+    // Tab navigation - Next buttons
+    document.querySelectorAll('.next-tab').forEach(button => {
+        button.addEventListener('click', function() {
+            const nextTabId = this.getAttribute('data-next-tab');
+            const currentTab = this.closest('.tab-pane').id.replace('-pane', '');
+
+            // Validate current tab before proceeding
+            if (validateTab(currentTab)) {
+                // Show next tab using Bootstrap's tab functionality
+                const nextTabElement = document.querySelector(`[data-bs-target="#${nextTabId}-pane"]`);
+                if (nextTabElement) {
+                    bootstrap.Tab.getInstance(nextTabElement).show();
+                }
+            }
+        });
+    });
+
+    // Tab navigation - Previous buttons
+    document.querySelectorAll('.previous-tab').forEach(button => {
+        button.addEventListener('click', function() {
+            const previousTabId = this.getAttribute('data-previous-tab');
+            const previousTabElement = document.querySelector(`[data-bs-target="#${previousTabId}-pane"]`);
+
+            if (previousTabElement) {
+                bootstrap.Tab.getInstance(previousTabElement).show();
+            }
+        });
+    });
+
+    // Form submission
+    document.getElementById('revenueSiteForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Validate all tabs before submission
+        if (!validateTab('personal') || !validateTab('official') || !validateTab('documentation')) {
+            // Show error message and go to first invalid tab
+            alert('{% trans "Please fix all validation errors before submitting." %}');
+
+            // Find first invalid tab and show it
+            if (!validateTab('personal')) {
+                bootstrap.Tab.getInstance(document.querySelector('[data-bs-target="#personal-pane"]')).show();
+            } else if (!validateTab('official')) {
+                bootstrap.Tab.getInstance(document.querySelector('[data-bs-target="#official-pane"]')).show();
+            } else {
+                bootstrap.Tab.getInstance(document.querySelector('[data-bs-target="#documentation-pane"]')).show();
+            }
+
+            return;
+        }
+
+        // Create FormData and collect all files
+        const formData = new FormData(this);
+        const files = [];
+        const filenames = [];
+
+        // Get all file inputs
+        document.querySelectorAll('input[name="uploadfile[]"]').forEach((input, index) => {
+            if (input.files[0]) {
+                files.push(input.files[0]);
+                filenames.push(formData.getAll('filename[]')[index]);
+            }
+        });
+
+        // If no files, submit normally
+        if (files.length === 0) {
+            this.submit();
+            return;
+        }
+
+        // Create a new FormData for the AJAX request
+        const mergeFormData = new FormData();
+        files.forEach((file, index) => {
+            mergeFormData.append('files', file);
+            mergeFormData.append('filenames', filenames[index]);
+        });
+        mergeFormData.append('full_name', formData.get('full_name'));
+        mergeFormData.append('document_title', formData.get('document_title'));
+        mergeFormData.append('csrfmiddlewaretoken', formData.get('csrfmiddlewaretoken'));
+
+        // Show loading
+        const submitBtn = this.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> {% trans "Processing..." %}';
+
+        // Send files to server for merging
+        fetch('{% url "merge_documents" %}', {
+            method: 'POST',
+            body: mergeFormData,
+            headers: {
+                'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Server error: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Set the merged document path and submit the form
+                document.getElementById('merged_document_path').value = data.merged_path;
+                document.getElementById('revenueSiteForm').submit();
+            } else {
+                throw new Error(data.error || 'Unknown error occurred');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert(`Error: ${error.message}\n{% trans "Please try again or contact support." %}`);
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> {% trans "Save" %}';
+        });
+    });
+
+    // Tab validation function
+    function validateTab(tabId) {
+        const tab = document.getElementById(tabId + '-pane');
+        if (!tab) return true;
+
+        const inputs = tab.querySelectorAll('input[required], select[required], textarea[required]');
+        let isValid = true;
+
+        inputs.forEach(input => {
+            if (!input.value.trim()) {
+                input.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                input.classList.remove('is-invalid');
+            }
+        });
+
+        return isValid;
+    }
+
+    // Remove invalid class when user starts typing
+    document.querySelectorAll('input, select, textarea').forEach(input => {
+        input.addEventListener('input', function() {
+            this.classList.remove('is-invalid');
+        });
+    });
+});
+</script>
+
+<style>
+.nav-tabs .nav-link {
+    font-weight: 500;
+    color: #495057;
+}
+
+.nav-tabs .nav-link.active {
+    font-weight: 600;
+    color: #0d6efd;
+    background-color: #fff;
+    border-color: #dee2e6 #dee2e6 #fff;
+}
+
+.tab-pane {
+    padding: 20px 0;
+    min-height: 300px;
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.btn:disabled {
+    cursor: not-allowed;
+}
+
+.document-item {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #dee2e6;
+}
+</style>
+{% endblock %}

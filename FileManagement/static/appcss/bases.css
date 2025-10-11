@@ -1,0 +1,283 @@
+/* CSS Variables for consistent theming */
+:root {
+    --primary-color: #4361ee;
+    --secondary-color: #3f37c9;
+    --accent-color: #4895ef;
+    --text-primary: #2b2d42;
+    --text-secondary: #6c757d;
+    --bg-light: #f8f9fa;
+    --bg-white: #ffffff;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+    --border-radius: 8px;
+    --sidebar-width: 250px;
+    --navbar-height: 70px;
+}
+
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f5f7fb;
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* Layout */
+.main-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Navigation Styles */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--navbar-height);
+    background: linear-gradient(120deg, var(--primary-color), var(--secondary-color));
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    box-shadow: var(--shadow);
+    z-index: 1000;
+}
+
+.navbar-brand-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-brand-wrapper strong {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--bg-white);
+    letter-spacing: 0.5px;
+}
+
+.navbar-menu-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-nav {
+    display: flex;
+    list-style: none;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-item {
+    margin-left: 20px;
+    position: relative;
+}
+
+.nav-profile.dropdown {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.nav-profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    margin-right: 10px;
+}
+
+.nav-profile-name {
+    color: var(--bg-white);
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.nav-user-status p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.navbar-toggler {
+    background: transparent;
+    border: none;
+    color: var(--bg-white);
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: none;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    position: fixed;
+    top: var(--navbar-height);
+    left: 0;
+    height: calc(100vh - var(--navbar-height));
+    width: var(--sidebar-width);
+    background: var(--bg-white);
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    z-index: 999;
+    overflow-y: auto;
+}
+
+.sidebar-offcanvas {
+    transform: translateX(-100%);
+}
+
+.nav {
+    list-style: none;
+    padding: 20px 0;
+}
+
+.nav-item {
+    margin: 0;
+    width: 100%;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 15px 25px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: var(--transition);
+    position: relative;
+    border-left: 4px solid transparent;
+}
+
+.nav-link:hover, .nav-link.active {
+    background-color: rgba(67, 97, 238, 0.05);
+    color: var(--primary-color);
+    border-left-color: var(--primary-color);
+}
+
+.nav-link i {
+    font-size: 1.2rem;
+    margin-right: 15px;
+    width: 24px;
+    text-align: center;
+}
+
+.menu-title {
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.menu-arrow {
+    margin-left: auto;
+    transition: var(--transition);
+}
+
+.nav-link[aria-expanded="true"] .menu-arrow {
+    transform: rotate(90deg);
+}
+
+/* Content Area */
+.content-wrapper {
+    flex: 1;
+    padding: 30px;
+    margin-top: var(--navbar-height);
+    margin-left: var(--sidebar-width);
+    transition: var(--transition);
+}
+
+.content-header {
+    margin-bottom: 30px;
+}
+
+.content-header h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+
+.card {
+    background: var(--bg-white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+
+.card-body {
+    padding: 25px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.btn-primary {
+    padding: 10px 15px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    padding: 10px 15px;
+    background: var(--bg-white);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 70px;
+    }
+
+    .sidebar .menu-title, .sidebar .menu-arrow {
+        display: none;
+    }
+
+    .content-wrapper {
+        margin-left: 70px;
+    }
+
+    .navbar-toggler {
+        display: block;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: var(--sidebar-width);
+    }
+
+    .sidebar-offcanvas {
+        transform: translateX(0);
+    }
+
+    .content-wrapper {
+        margin-left: 0;
+    }
+
+    .nav-profile-name {
+        display: none;
+    }
+}
+
+/* Animation for sidebar toggle */
+.sidebar-open {
+    transform: translateX(0) !important;
+}

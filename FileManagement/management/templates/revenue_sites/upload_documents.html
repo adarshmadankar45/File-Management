@@ -1,0 +1,241 @@
+{% extends 'bases.html' %}
+{% load i18n %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'appcss/create.css' %}">
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">{% trans 'Upload Documents for' %} {{ site.full_name }}</h3>
+        <p class="text-muted">File No: {{ site.file_no }}</p>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data" id="documentUploadForm">
+            {% csrf_token %}
+            <input type="hidden" name="site_id" value="{{ site.pk }}">
+
+            <div class="row">
+                <!-- Document Title -->
+                <div class="col-md-6 mb-3">
+                    <label for="id_document_title" class="form-label">{% trans 'दस्तऐवजाचे शीर्षक / Document Title' %}</label>
+                    <input type="text" class="form-control" id="id_document_title" name="document_title"
+                           value="{{ site.document_title|default_if_none:'' }}" maxlength="200">
+                </div>
+
+                <!-- Remarks -->
+                <div class="col-md-12 mb-3">
+                    <label for="id_remarks" class="form-label">{% trans 'टिप्पण्या / Remarks' %}</label>
+                    <textarea class="form-control" id="id_remarks" name="remarks" rows="3">{{ site.remarks|default_if_none:'' }}</textarea>
+                </div>
+
+                <!-- Document List Section -->
+                <div class="col-12 mb-4">
+                    <h5>{% trans 'Document List' %}</h5>
+                    <div id="documentList">
+                        <div class="document-item row mb-3">
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" name="filename[]" placeholder="Document Name (e.g., Aadhar Card)" required>
+                            </div>
+                            <div class="col-md-5">
+                                <input type="file" class="form-control" name="uploadfile[]" accept="*" required>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-danger remove-document">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" id="addMore" class="btn btn-secondary mt-2">{% trans 'Add More Documents' %}</button>
+                </div>
+
+                <!-- Hidden field for merged document -->
+                <input type="hidden" id="merged_document_path" name="merged_document_path">
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{% url 'detail' site.pk %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> {% trans 'Back to Details' %}
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-upload"></i> {% trans 'Upload Documents' %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add more documents
+    document.getElementById('addMore').addEventListener('click', function() {
+        const newItem = document.createElement('div');
+        newItem.className = 'document-item row mb-3';
+        newItem.innerHTML = `
+            <div class="col-md-5">
+                <input type="text" class="form-control" name="filename[]" placeholder="Document Name" required>
+            </div>
+            <div class="col-md-5">
+                <input type="file" class="form-control" name="uploadfile[]" accept="*" required>
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-danger remove-document">Remove</button>
+            </div>
+        `;
+        document.getElementById('documentList').appendChild(newItem);
+    });
+
+    // Remove document
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-document')) {
+            e.target.closest('.document-item').remove();
+        }
+    });
+
+    // Form submission
+    document.getElementById('documentUploadForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Validate form
+        const hasFiles = document.querySelectorAll('input[name="uploadfile[]"]').length > 0 && 
+                        Array.from(document.querySelectorAll('input[name="uploadfile[]"]')).some(input => input.files.length > 0);
+
+        if (!hasFiles) {
+            alert('{% trans "Please add at least one document to upload." %}');
+            return;
+        }
+
+        // Validate all filename inputs
+        const filenameInputs = document.querySelectorAll('input[name="filename[]"]');
+        let allFilenamesValid = true;
+
+        filenameInputs.forEach((input, index) => {
+            const fileInput = document.querySelectorAll('input[name="uploadfile[]"]')[index];
+            if (fileInput.files.length > 0 && !input.value.trim()) {
+                input.classList.add('is-invalid');
+                allFilenamesValid = false;
+            } else {
+                input.classList.remove('is-invalid');
+            }
+        });
+
+        if (!allFilenamesValid) {
+            alert('{% trans "Please provide names for all documents." %}');
+            return;
+        }
+
+        // First merge documents, then upload
+        mergeAndUploadDocuments();
+    });
+
+    function mergeAndUploadDocuments() {
+        const form = document.getElementById('documentUploadForm');
+        const formData = new FormData(form);
+        const files = [];
+        const filenames = [];
+
+        // Get all file inputs that have files
+        document.querySelectorAll('input[name="uploadfile[]"]').forEach((input, index) => {
+            if (input.files[0]) {
+                files.push(input.files[0]);
+                const filenameInputs = document.querySelectorAll('input[name="filename[]"]');
+                filenames.push(filenameInputs[index] ? filenameInputs[index].value : `Document ${index + 1}`);
+            }
+        });
+
+        // Create a new FormData for the merge request
+        const mergeFormData = new FormData();
+        files.forEach((file, index) => {
+            mergeFormData.append('files', file);
+            mergeFormData.append('filenames', filenames[index]);
+        });
+        mergeFormData.append('full_name', '{{ site.full_name }}');
+        mergeFormData.append('document_title', formData.get('document_title'));
+        mergeFormData.append('csrfmiddlewaretoken', formData.get('csrfmiddlewaretoken'));
+
+        // Show loading
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> {% trans "Processing..." %}';
+
+        // Step 1: Merge documents
+        fetch('{% url "merge_documents" %}', {
+            method: 'POST',
+            body: mergeFormData,
+            headers: {
+                'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            // First check if response is JSON
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                return response.text().then(text => {
+                    throw new Error(`Server returned HTML instead of JSON. Status: ${response.status}`);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Step 2: Now upload the merged document to the site
+                return uploadMergedDocument(data.merged_path, formData);
+            } else {
+                throw new Error(data.error || 'Failed to merge documents');
+            }
+        })
+        .then(uploadResult => {
+            if (uploadResult.success) {
+                // Success - redirect to detail page
+                window.location.href = '{% url "detail" site.pk %}';
+            } else {
+                throw new Error(uploadResult.error || 'Failed to upload documents');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            let errorMessage = '{% trans "An error occurred while processing your request." %}';
+
+            if (error.message.includes('HTML instead of JSON')) {
+                errorMessage = '{% trans "Server error occurred. Please check the server logs." %}';
+            } else {
+                errorMessage = error.message;
+            }
+
+            alert(`Error: ${errorMessage}`);
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        });
+    }
+
+    function uploadMergedDocument(mergedPath, formData) {
+        // Create FormData for the upload request
+        const uploadFormData = new FormData();
+        uploadFormData.append('merged_document_path', mergedPath);
+        uploadFormData.append('document_title', formData.get('document_title'));
+        uploadFormData.append('remarks', formData.get('remarks'));
+        uploadFormData.append('csrfmiddlewaretoken', formData.get('csrfmiddlewaretoken'));
+
+        return fetch('{% url "upload_documents" site.pk %}', {
+            method: 'POST',
+            body: uploadFormData,
+            headers: {
+                'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            // Check if response is JSON
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                return response.text().then(text => {
+                    throw new Error(`Server returned HTML instead of JSON. Status: ${response.status}`);
+                });
+            }
+            return response.json();
+        });
+    }
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,196 @@
+{% load i18n %}
+
+<nav class="sidebar" style="position: fixed; left: 0; top: 60px; width: 250px; height: calc(100vh - 120px); background-color: #f8f9fa; border-right: 1px solid #dee2e6; padding: 20px 0; overflow-y: auto;">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link active" href="{% url 'dashboard' %}" style="padding: 12px 25px; color: #1a237e; font-weight: 500; border-left: 3px solid #1a237e; background-color: #e8eaf6;">
+          <i class="fas fa-tachometer-alt me-3"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+
+      <!-- Master Menu -->
+      <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="collapse" href="#masterMenu" role="button" aria-expanded="false" aria-controls="masterMenu" style="padding: 12px 25px; color: #555; border-left: 3px solid transparent;">
+          <i class="fas fa-cog me-3"></i>
+          <span>Master</span>
+          <i class="fas fa-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+        </a>
+        <div class="collapse" id="masterMenu">
+          <ul class="nav flex-column" style="background-color: #f1f3f4; margin-left: 0; padding-left: 0;">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'search_ward' %}" style="padding: 10px 25px 10px 50px; color: #555; font-size: 0.9rem; border-left: 3px solid transparent;">
+                <i class="fas fa-map-marker-alt me-2"></i>
+                <span>Ward</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <!-- Digital Files Menu -->
+      <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="collapse" href="#digitalFilesMenu" role="button" aria-expanded="false" aria-controls="digitalFilesMenu" style="padding: 12px 25px; color: #555; border-left: 3px solid transparent;">
+          <i class="fas fa-folder me-3"></i>
+          <span>Digital Files</span>
+          <i class="fas fa-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+        </a>
+        <div class="collapse" id="digitalFilesMenu">
+          <ul class="nav flex-column" style="background-color: #f1f3f4; margin-left: 0; padding-left: 0;">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'search_drawers' %}" style="padding: 10px 25px 10px 50px; color: #555; font-size: 0.9rem; border-left: 3px solid transparent;">
+                <i class="fas fa-archive me-2"></i>
+                <span>Drawer</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'search_compartments' %}" style="padding: 10px 25px 10px 50px; color: #555; font-size: 0.9rem; border-left: 3px solid transparent;">
+                <i class="fas fa-folder-open me-2"></i>
+                <span>Compartments</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      <!-- Revenue Site Management -->
+      <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="collapse" href="#revenueMenu" role="button" aria-expanded="false" aria-controls="revenueMenu" style="padding: 12px 25px; color: #555; border-left: 3px solid transparent;">
+          <i class="fas fa-file-contract me-3"></i>
+          <span>Customer</span>
+          <i class="fas fa-chevron-down ms-auto" style="font-size: 0.8rem;"></i>
+        </a>
+        <div class="collapse" id="revenueMenu">
+          <ul class="nav flex-column" style="background-color: #f1f3f4; margin-left: 0; padding-left: 0;">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'create' %}" style="padding: 10px 25px 10px 50px; color: #555; font-size: 0.9rem; border-left: 3px solid transparent;">
+                <i class="fas fa-plus-circle me-2"></i>
+                <span>Register</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'list' %}" style="padding: 10px 25px 10px 50px; color: #555; font-size: 0.9rem; border-left: 3px solid transparent;">
+                <i class="fas fa-list me-2"></i>
+                <span>List</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+      {% if user.is_authenticated %}
+      <li class="nav-item">
+        <form method="post" action="{% url 'logout' %}" class="d-inline" style="width: 100%;">
+          {% csrf_token %}
+          <button type="submit" class="nav-link" style="padding: 12px 25px; color: #555; border-left: 3px solid transparent; border: none; background: none; width: 100%; text-align: left;">
+            <i class="fas fa-sign-out-alt me-3"></i>
+            <span>Logout</span>
+          </button>
+        </form>
+      </li>
+      {% endif %}
+    </ul>
+</nav>
+
+<style>
+.sidebar .nav-link {
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.sidebar .nav-link:hover {
+    background-color: #e8eaf6;
+    color: #1a237e;
+    border-left: 3px solid #1a237e;
+}
+
+.sidebar .nav-link[aria-expanded="true"] {
+    background-color: #e8eaf6;
+    color: #1a237e;
+    border-left: 3px solid #1a237e;
+}
+
+.sidebar .collapse .nav-link {
+    padding-left: 60px !important;
+}
+
+.sidebar .collapse .nav-link:hover {
+    background-color: #e3e5f1;
+}
+
+/* Ensure proper spacing for nested menus */
+.sidebar .nav-item {
+    margin-bottom: 2px;
+}
+
+/* Smooth collapse animation */
+.collapse {
+    transition: all 0.3s ease;
+}
+
+/* Chevron rotation */
+.sidebar .nav-link[aria-expanded="true"] .fa-chevron-down {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease;
+}
+
+.sidebar .nav-link .fa-chevron-down {
+    transition: transform 0.3s ease;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-expand current active menu based on current URL
+    const currentUrl = window.location.pathname;
+
+    // Define URL patterns for each menu
+    const masterUrls = ['/ward/', '/search_ward/'];
+    const digitalFilesUrls = ['/drawer/', '/search_drawers/', '/compartment/', '/search_compartments/'];
+    const revenueUrls = ['/create/', '/list/', '/detail/', '/update/'];
+
+    // Check and expand relevant menu
+    if (masterUrls.some(url => currentUrl.includes(url))) {
+        const masterMenu = document.getElementById('masterMenu');
+        if (masterMenu) {
+            masterMenu.classList.add('show');
+        }
+    } else if (digitalFilesUrls.some(url => currentUrl.includes(url))) {
+        const digitalMenu = document.getElementById('digitalFilesMenu');
+        if (digitalMenu) {
+            digitalMenu.classList.add('show');
+        }
+    } else if (revenueUrls.some(url => currentUrl.includes(url))) {
+        const revenueMenu = document.getElementById('revenueMenu');
+        if (revenueMenu) {
+            revenueMenu.classList.add('show');
+        }
+    }
+
+    // Add active class to current page link
+    const navLinks = document.querySelectorAll('.sidebar .nav-link');
+    navLinks.forEach(link => {
+        if (link.href === window.location.href) {
+            link.classList.add('active');
+            link.style.color = '#1a237e';
+            link.style.fontWeight = '500';
+            link.style.borderLeft = '3px solid #1a237e';
+            link.style.backgroundColor = '#e8eaf6';
+
+            // Also highlight parent menu if it's a nested link
+            const parentMenu = link.closest('.collapse');
+            if (parentMenu) {
+                const parentLink = document.querySelector(`[href="#${parentMenu.id}"]`);
+                if (parentLink) {
+                    parentLink.classList.add('active');
+                    parentLink.style.color = '#1a237e';
+                    parentLink.style.fontWeight = '500';
+                    parentLink.style.borderLeft = '3px solid #1a237e';
+                    parentLink.style.backgroundColor = '#e8eaf6';
+                    parentLink.setAttribute('aria-expanded', 'true');
+                }
+            }
+        }
+    });
+});
+</script>

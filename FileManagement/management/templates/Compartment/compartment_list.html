@@ -1,0 +1,61 @@
+{% extends 'bases.html' %}
+{% load i18n %}
+
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'appcss/master.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<div class="master-container">
+    <div class="master-card">
+        <div class="master-card-header">
+            <h2 class="master-header">Compartments</h2>
+            <a href="{% url 'create_compartment' %}" class="btn btn-primary ml-2">
+                <i class="fas fa-plus"></i> {% trans 'Add New' %}
+            </a>
+        </div>
+
+        <div class="master-card-body">
+            <div class="table-container">
+                <table class="master-table">
+                    <thead>
+                        <tr>
+                            <th>Compartment Name/Number</th>
+                            <th>Drawer</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for compartment in compartments %}
+                        <tr>
+                            <td>{{ compartment.compartment_number }}</td>
+                            <td>{{ compartment.drawer.drawer_number }}</td>
+                            <td>{{ compartment.description|default:"-" }}</td>
+                            <td>
+                                <div class="master-btn-group">
+                                    <a href="{% url 'update_compartment' compartment.pk %}" class="master-btn master-btn-warning master-btn-sm" title="Edit">
+                                    </a>
+                                    <form method="post" action="{% url 'delete_compartment' compartment.pk %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="master-btn master-btn-danger master-btn-sm"
+                                                onclick="return confirm('Are you sure you want to delete this compartment?')"
+                                                title="Delete">
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4">No compartments found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

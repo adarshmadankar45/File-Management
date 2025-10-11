@@ -1,0 +1,662 @@
+{% extends 'bases.html' %}
+{% load i18n %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'appcss/list.css' %}">
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h3 class="card-title">{% trans 'Customer List' %}</h3>
+            <div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-qrcode"></i> {% trans 'QR Codes' %}
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><button class="dropdown-item" onclick="showPreview('all')">
+                            <i class="fas fa-download"></i> {% trans 'All Clients' %}
+                        </button></li>
+                        <li><button class="dropdown-item" onclick="showClientSelection()">
+                            <i class="fas fa-users"></i> {% trans 'Select Clients' %}
+                        </button></li>
+                    </ul>
+                </div>
+                <a href="{% url 'create' %}" class="btn btn-primary ml-2">
+                    <i class="fas fa-plus"></i> {% trans 'Add New' %}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Box for Main List - Moved to card body -->
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <div class="search-container-main">
+                    <span class="search-icon-main"><i class="fas fa-search"></i></span>
+                    <input type="text" id="mainSearchInput" class="search-input-main" placeholder="{% trans 'Search clients...' %}">
+                </div>
+            </div>
+        </div>
+
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>{% trans 'City Survey No.' %}</th>
+                    <th>{% trans 'Plot No.' %}</th>
+                    <th>{% trans 'Full Name' %}</th>
+                    <th>{% trans 'Ward' %}</th>
+                    <th>{% trans 'Drawer' %}</th>
+                    <th>{% trans 'Compartment' %}</th>
+                    <th>{% trans 'District' %}</th>
+                    <th>{% trans 'Taluka' %}</th>
+                    <th>{% trans 'Password' %}</th>
+                    <th>{% trans 'Actions' %}</th>
+                </tr>
+            </thead>
+            <tbody id="mainTableBody">
+                {% for site in sites %}
+                <tr class="main-row">
+                    <td>{{ site.nagar_bhumapan_kramank }}</td>
+                    <td>{{ site.plot_no }}</td>
+                    <td>{{ site.full_name }}</td>
+                    <td>{{ site.ward.ward_number|default:"N/A" }}</td>
+                    <td>{{ site.drawer.drawer_number|default:"N/A" }}</td>
+                    <td>{{ site.compartment.compartment_number|default:"N/A" }}</td>
+                    <td>{{ site.district }}</td>
+                    <td>{{ site.taluka }}</td>
+                    <td>{{ site.pdf_password }}</td>
+                    <td>
+                        <a href="{% url 'detail' site.pk %}" class="btn btn-sm btn-info" title="{% trans 'View Detail' %}">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="{% url 'update' site.pk %}" class="btn btn-sm btn-primary" title="{% trans 'Update' %}">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                            {% if not site.document_file %}
+                        <a href="{% url 'upload_documents' site.pk %}" class="btn btn-sm btn-info" title="{% trans 'Upload Documents' %}">
+                            <i class="fas fa-upload"></i>
+                        </a>
+                        {% endif %}
+                        {% if site.document_file %}
+                        <a href="{% url 'unmerge' site.pk %}" class="btn btn-sm btn-warning" title="{% trans 'Unmerge Documents' %}">
+                            <i class="fas fa-file-export"></i>
+                        </a>
+                        {% endif %}
+                        {% if site.document_file %}
+                        <a href="{% url 'unmerge_options' site.pk %}" class="btn btn-sm btn-warning" title="{% trans 'Select Documents to Unmerge' %}">
+                            <i class="fas fa-file-export"></i>
+                        </a>
+                        {% endif %}
+                        <button class="btn btn-sm btn-danger delete-revenuesite"
+                                data-site-id="{{ site.pk }}"
+                                data-site-name="{{ site.full_name }}"
+                                title="{% trans 'Delete' %}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                            {% if site.document_file %}
+                        <button class="btn btn-sm btn-success show-qr-code"
+                            data-site-id="{{ site.pk }}"
+                            data-site-name="{{ site.full_name }}"
+                            data-document-url="{% if site.document_file %}{{ site.document_file.url }}{% else %}{% url 'detail' site.pk %}{% endif %}"
+                            data-file-no="{{ site.file_no|default:'N/A' }}"
+                            data-doc-type="{{ site.document_title|default:'Revenue Site' }}"
+                            data-ward="{{ site.ward.ward_number|default:'N/A' }}"
+                            data-drawer="{{ site.drawer.drawer_number|default:'N/A' }}"
+                            data-compartment="{{ site.compartment.compartment_number|default:'N/A' }}"
+                            data-inward="{{ site.registration_date|date:'d-m-Y' }}"
+                            title="{% trans 'Generate QR Code' %}">
+                            <i class="fas fa-qrcode"></i>
+                        </button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" class="text-center">{% trans 'No revenue sites found.' %}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if is_paginated %}
+        <div class="pagination">
+            <span class="page-links">
+                {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}">{% trans 'previous' %}</a>
+                {% endif %}
+                <span class="page-current">
+                    {% trans 'Page' %} {{ page_obj.number }} {% trans 'of' %} {{ page_obj.paginator.num_pages }}.
+                </span>
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">{% trans 'next' %}</a>
+                {% endif %}
+            </span>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Preview Modal -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{% trans 'QR Code Preview' %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="previewContainer">
+                <div class="text-center py-5">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">{% trans 'Generating preview...' %}</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans 'Close' %}</button>
+                <form id="downloadForm" method="post" action="">
+                    {% csrf_token %}
+                    <div id="selectedIdsContainer"></div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-download"></i> {% trans 'Download PDF' %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Client Selection Modal -->
+<div class="modal fade" id="clientSelectionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{% trans 'Select Clients' %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="resetClientSelection()"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Search Box for Client Selection Modal -->
+                <div class="mb-3">
+                    <div class="search-container-modal">
+                        <span class="search-icon-modal"><i class="fas fa-search"></i></span>
+                        <input type="text" id="modalSearchInput" class="search-input-modal" placeholder="{% trans 'Search clients by name, file number, or document type...' %}">
+                    </div>
+                </div>
+
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th width="5%"><input type="checkbox" id="selectAll"></th>
+                            <th>{% trans 'Full Name' %}</th>
+                            <th>{% trans 'File No.' %}</th>
+                            <th>{% trans 'Document Type' %}</th>
+                            <th>{% trans 'Inward Date' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientSelectionBody">
+                        {% for site in sites %}
+                        <tr class="client-row" style="cursor: pointer;">
+                            <td><input type="checkbox" class="clientCheckbox" value="{{ site.pk }}"></td>
+                            <td onclick="toggleCheckbox(this)">{{ site.full_name }}</td>
+                            <td onclick="toggleCheckbox(this)">{{ site.file_no|default:'N/A' }}</td>
+                            <td onclick="toggleCheckbox(this)">{{ site.document_title|default:'Revenue Site' }}</td>
+                            <td onclick="toggleCheckbox(this)">{{ site.registration_date|date:'d-m-Y' }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="5" class="text-center">{% trans 'No revenue sites found.' %}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="resetClientSelection()">{% trans 'Cancel' %}</button>
+                <button type="button" class="btn btn-primary" onclick="previewSelectedClients()">
+                    {% trans 'Preview Selected' %}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- QR Code Modal -->
+<div class="modal fade" id="qrCodeModal" tabindex="-1" aria-labelledby="qrCodeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="qrCodeModalLabel">{% trans 'QR Code' %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="qrCodeImage" src="" class="img-fluid mb-3" style="max-width: 200px;">
+                <div id="qrCodeData" class="text-start small">
+                    <!-- Data will be inserted here -->
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button id="downloadQrBtn" type="button" class="btn btn-primary btn-sm">
+                    <i class="fas fa-download"></i> {% trans 'Download QR' %}
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> {% trans 'Close' %}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{% trans 'Confirm Deletion' %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>{% trans 'Are you sure you want to delete the Customer site for' %} <strong id="deleteSiteName"></strong>?</p>
+                <p class="text-danger">{% trans 'This action cannot be undone. All associated documents will also be deleted.' %}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans 'Cancel' %}</button>
+                <form id="deleteForm" method="post" action="">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">{% trans 'Delete' %}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Function to toggle checkbox when clicking on table cells
+function toggleCheckbox(cell) {
+    const row = cell.parentElement;
+    const checkbox = row.querySelector('.clientCheckbox');
+    checkbox.checked = !checkbox.checked;
+
+    // Update select all checkbox state
+    updateSelectAllCheckbox();
+}
+
+// Function to update select all checkbox state
+function updateSelectAllCheckbox() {
+    const visibleCheckboxes = document.querySelectorAll('#clientSelectionBody .client-row:not([style*="display: none"]) .clientCheckbox');
+    const checkedCheckboxes = document.querySelectorAll('#clientSelectionBody .client-row:not([style*="display: none"]) .clientCheckbox:checked');
+
+    const selectAllCheckbox = document.getElementById('selectAll');
+    if (visibleCheckboxes.length === checkedCheckboxes.length) {
+        selectAllCheckbox.checked = true;
+        selectAllCheckbox.indeterminate = false;
+    } else if (checkedCheckboxes.length === 0) {
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = false;
+    } else {
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = true;
+    }
+}
+
+// Real-time search functionality for main list
+function searchMainList() {
+    const searchTerm = document.getElementById('mainSearchInput').value.toLowerCase().trim();
+    const rows = document.querySelectorAll('#mainTableBody .main-row');
+
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+        const rowText = row.textContent.toLowerCase();
+        if (rowText.includes(searchTerm)) {
+            row.style.display = '';
+            visibleCount++;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+
+    // Show message if no results found
+    const noResultsRow = document.querySelector('#mainTableBody tr:last-child');
+    if (visibleCount === 0 && searchTerm !== '') {
+        if (!noResultsRow || !noResultsRow.classList.contains('no-results')) {
+            const newRow = document.createElement('tr');
+            newRow.className = 'no-results';
+            newRow.innerHTML = `<td colspan="9" class="text-center">{% trans 'No matching records found.' %}</td>`;
+            document.getElementById('mainTableBody').appendChild(newRow);
+        }
+    } else {
+        if (noResultsRow && noResultsRow.classList.contains('no-results')) {
+            noResultsRow.remove();
+        }
+    }
+}
+
+// Real-time search functionality for client selection modal
+function searchModalList() {
+    const searchTerm = document.getElementById('modalSearchInput').value.toLowerCase().trim();
+    const rows = document.querySelectorAll('#clientSelectionBody .client-row');
+
+    let visibleCount = 0;
+
+    rows.forEach(row => {
+        const rowText = row.textContent.toLowerCase();
+        if (rowText.includes(searchTerm)) {
+            row.style.display = '';
+            visibleCount++;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+
+    // Show message if no results found
+    const existingNoResults = document.querySelector('#clientSelectionBody .no-results-modal');
+    if (visibleCount === 0 && searchTerm !== '') {
+        if (!existingNoResults) {
+            const newRow = document.createElement('tr');
+            newRow.className = 'no-results-modal';
+            newRow.innerHTML = `<td colspan="5" class="text-center">{% trans 'No matching clients found.' %}</td>`;
+            document.getElementById('clientSelectionBody').appendChild(newRow);
+        }
+    } else {
+        if (existingNoResults) {
+            existingNoResults.remove();
+        }
+    }
+
+    // Update select all checkbox state after search
+    updateSelectAllCheckbox();
+}
+
+// Reset client selection when modal is closed
+function resetClientSelection() {
+    document.querySelectorAll('.clientCheckbox').forEach(checkbox => {
+        checkbox.checked = false;
+    });
+    document.getElementById('selectAll').checked = false;
+    document.getElementById('selectAll').indeterminate = false;
+    document.getElementById('modalSearchInput').value = '';
+    searchModalList(); // Refresh the list to show all clients
+}
+
+// Event listeners for real-time search
+document.addEventListener('DOMContentLoaded', function() {
+    // Main list search
+    const mainSearchInput = document.getElementById('mainSearchInput');
+    if (mainSearchInput) {
+        mainSearchInput.addEventListener('input', function() {
+            searchMainList();
+        });
+
+        // Clear search when page loads
+        mainSearchInput.value = '';
+        searchMainList();
+    }
+
+    // Modal search
+    const modalSearchInput = document.getElementById('modalSearchInput');
+    if (modalSearchInput) {
+        modalSearchInput.addEventListener('input', function() {
+            searchModalList();
+        });
+    }
+
+    // Select all checkbox functionality
+    document.getElementById('selectAll').addEventListener('change', function() {
+        // Only check visible rows
+        const visibleCheckboxes = document.querySelectorAll('#clientSelectionBody .client-row:not([style*="display: none"]) .clientCheckbox');
+        visibleCheckboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+    });
+
+    // Individual checkbox change event
+    document.querySelectorAll('.clientCheckbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            updateSelectAllCheckbox();
+        });
+    });
+
+    // Existing QR code functionality
+const qrButtons = document.querySelectorAll('.show-qr-code');
+let currentQrCodeData = '';
+let currentSiteName = '';
+
+qrButtons.forEach(button => {
+    button.addEventListener('click', function() {
+        currentSiteName = this.getAttribute('data-site-name');
+        const documentUrl = this.getAttribute('data-document-url');
+        const fileNo = this.getAttribute('data-file-no');
+        const docType = this.getAttribute('data-doc-type');
+        const inward = this.getAttribute('data-inward');
+        const ward = this.getAttribute('data-ward');
+        const drawer = this.getAttribute('data-drawer');
+        const compartment = this.getAttribute('data-compartment');
+
+        // IMPORTANT: QR code should contain ONLY the URL for PDF opening
+        // Build the absolute URL
+        const absoluteUrl = window.location.origin + documentUrl;
+        currentQrCodeData = absoluteUrl; // ONLY the URL, no text data
+
+        const displayData = `
+            <div class="mb-1"><strong>FILE NO:</strong> ${fileNo}</div>
+            <div class="mb-1"><strong>CLIENT:</strong> ${currentSiteName}</div>
+            <div class="mb-1"><strong>DOC TYPE:</strong> ${docType}</div>
+            <div class="mb-1"><strong>WARD:</strong> ${ward}</div>
+            <div class="mb-1"><strong>DRAWER:</strong> ${drawer}</div>
+            <div class="mb-1"><strong>COMPARTMENT:</strong> ${compartment}</div>
+            <div class="mb-1"><strong>INWARD DATE:</strong> ${inward}</div>
+            <div class="mb-1"><strong>PDF LINK:</strong> <span class="text-truncate d-inline-block" style="max-width: 180px;">${absoluteUrl}</span></div>
+        `;
+
+        const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(currentQrCodeData)}`;
+
+        document.getElementById('qrCodeModalLabel').textContent = `QR Code - ${currentSiteName}`;
+        document.getElementById('qrCodeImage').src = qrCodeUrl;
+        document.getElementById('qrCodeData').innerHTML = displayData;
+
+        const modal = new bootstrap.Modal(document.getElementById('qrCodeModal'));
+        modal.show();
+    });
+});
+
+    // Download QR code functionality
+    document.getElementById('downloadQrBtn').addEventListener('click', async function() {
+        if (!currentQrCodeData) return;
+
+        try {
+            const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(currentQrCodeData)}`;
+            const response = await fetch(qrCodeUrl);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `QR_${currentSiteName.replace(/[^a-z0-9]/gi, '_')}.png`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (error) {
+            console.error('Error downloading QR code:', error);
+            alert('Failed to download QR code. Please try again.');
+        }
+    });
+});
+
+// Show client selection modal
+function showClientSelection() {
+    // Reset search and selections when opening modal
+    resetClientSelection();
+    const modal = new bootstrap.Modal(document.getElementById('clientSelectionModal'));
+    modal.show();
+}
+
+// Show preview for all clients
+function showPreview(type) {
+    const previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
+    previewModal.show();
+
+    // Show loading state
+    document.getElementById('previewContainer').innerHTML = `
+        <div class="text-center py-5">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">{% trans 'Generating preview...' %}</p>
+        </div>
+    `;
+
+    // Set up download form
+    document.getElementById('downloadForm').action = type === 'all'
+        ? "{% url 'generate_all_qr_pdf' %}"
+        : "{% url 'generate_selected_qr_pdf' %}";
+
+    // Clear previous selections
+    document.getElementById('selectedIdsContainer').innerHTML = '';
+
+    // Fetch preview data
+    fetch(`/get-qr-preview-data/?type=${type}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.previews && data.previews.length > 0) {
+                renderPreview(data.previews);
+            } else {
+                document.getElementById('previewContainer').innerHTML = `
+                    <div class="alert alert-warning text-center">
+                        {% trans 'No clients found to generate QR codes.' %}
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('previewContainer').innerHTML = `
+                <div class="alert alert-danger text-center">
+                    {% trans 'Error generating preview. Please try again.' %}
+                </div>
+            `;
+        });
+}
+
+// Preview selected clients
+function previewSelectedClients() {
+    const selected = Array.from(document.querySelectorAll('.clientCheckbox:checked'))
+        .map(checkbox => checkbox.value);
+
+    if (selected.length === 0) {
+        alert('Please select at least one client');
+        return;
+    }
+
+    // Set hidden inputs for download form
+    const container = document.getElementById('selectedIdsContainer');
+    container.innerHTML = '';
+    selected.forEach(id => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'selected_sites';
+        input.value = id;
+        container.appendChild(input);
+    });
+
+    // Close selection modal
+    const clientModal = bootstrap.Modal.getInstance(document.getElementById('clientSelectionModal'));
+    clientModal.hide();
+
+    // Show preview modal
+    const previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
+    previewModal.show();
+
+    document.getElementById('previewContainer').innerHTML = `
+        <div class="text-center py-5">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">{% trans 'Generating preview...' %}</p>
+        </div>
+    `;
+
+    document.getElementById('downloadForm').action = "{% url 'generate_selected_qr_pdf' %}";
+
+    // Fetch preview data
+    fetch(`/get-qr-preview-data/?ids=${selected.join(',')}`)
+        .then(response => response.json())
+        .then(data => renderPreview(data.previews));
+}
+
+// Render preview cards - Fixed empty space issue for single QR code
+function renderPreview(previews) {
+    if (previews.length === 1) {
+        // Single QR code - display centered without empty space
+        const preview = previews[0];
+        document.getElementById('previewContainer').innerHTML = `
+            <div class="d-flex justify-content-center">
+                <div class="card" style="max-width: 500px;">
+                    <div class="card-body text-center">
+                        <img src="${preview.image}" class="img-fluid mb-3" style="max-width: 250px;">
+                        <h5>${preview.name}</h5>
+                        <div style="white-space: pre-wrap; font-family: monospace; text-align: left; display: inline-block;">
+                            ${preview.data}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    } else {
+        // Multiple QR codes - use grid layout
+        let html = '<div class="row">';
+        previews.forEach(preview => {
+            html += `
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-5 text-center">
+                                <img src="${preview.image}" class="img-fluid" style="max-width: 200px;">
+                            </div>
+                            <div class="col-md-7">
+                                <h5>${preview.name}</h5>
+                                <div style="white-space: pre-wrap; font-family: monospace;">${preview.data}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
+        });
+        html += '</div>';
+        document.getElementById('previewContainer').innerHTML = html;
+    }
+}
+
+// Delete functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteButtons = document.querySelectorAll('.delete-revenuesite');
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
+    const deleteForm = document.getElementById('deleteForm');
+    const deleteSiteName = document.getElementById('deleteSiteName');
+
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const siteId = this.getAttribute('data-site-id');
+            const siteName = this.getAttribute('data-site-name');
+
+            // Set the site name in the modal
+            deleteSiteName.textContent = siteName;
+
+            // Set the form action URL
+            deleteForm.action = `/revenuesite/${siteId}/delete/`;
+
+            // Show the modal
+            deleteModal.show();
+        });
+    });
+
+    // Handle form submission
+    deleteForm.addEventListener('submit', function(e) {
+        // The form will submit normally via POST
+        // Bootstrap modal will close automatically
+    });
+});
+
+</script>
+{% endblock %}

@@ -1,0 +1,393 @@
+{% extends 'bases.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'appcss/detail.css' %}">
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="page-header">
+                <h1>{% trans 'Customer Details' %}</h1>
+                <div class="btn-group">
+                    <a href="{% url 'update' object.pk %}" class="btn btn-primary btn-icon-only" data-tooltip="{% trans 'Edit' %}">
+                        <i class="fas fa-edit"></i>
+                        <span class="btn-text">{% trans 'Edit' %}</span>
+                    </a>
+                    {% if not object.document_file %}
+                    <a href="{% url 'upload_documents' object.pk %}" class="btn btn-info btn-icon-only" data-tooltip="{% trans 'Upload Documents' %}">
+                        <i class="fas fa-upload"></i>
+                        <span class="btn-text">{% trans 'Upload Documents' %}</span>
+                    </a>
+                    {% endif %}
+                    <button class="btn btn-sm btn-danger delete-revenuesite"
+                                data-site-id="{{ site.pk }}"
+                                data-site-name="{{ site.full_name }}"
+                                title="{% trans 'Delete' %}">
+                            <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Personal Information Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card info-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-user"></i> {% trans 'Personal Information' %}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="info-item">
+                                <label>{% trans 'Full Name' %}:</label>
+                                <span>{{ object.full_name }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="info-item">
+                                <label>{% trans 'Email' %}:</label>
+                                <span>{{ object.email }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="info-item">
+                                <label>{% trans 'Mobile Number' %}:</label>
+                                <span>{{ object.mobile_number }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Official Details Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card info-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-building"></i> {% trans 'Official Details' %}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-group">
+                                <h5 class="section-title">{% trans 'Property Information' %}</h5>
+                                <div class="info-item">
+                                    <label>{% trans 'City Survey Number' %}:</label>
+                                    <span>{{ object.nagar_bhumapan_kramank }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>{% trans 'Seat Number' %}:</label>
+                                    <span>{{ object.seat_no }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>{% trans 'Plot Number' %}:</label>
+                                    <span>{{ object.plot_no }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>{% trans 'Square Feet' %}:</label>
+                                    <span>{{ object.square_feet }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>{% trans 'Ownership Type' %}:</label>
+                                    <span>{{ object.dharna_dhikhar }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-group">
+                                <h5 class="section-title">{% trans 'Registration Details' %}</h5>
+                                <div class="info-item">
+                                    <label>{% trans 'File Number' %}:</label>
+                                    <span>{{ object.file_no }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>{% trans 'Drawer' %}:</label>
+                                    <span>{{ object.drawer.drawer_number|default:"N/A" }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>{% trans 'Compartment' %}:</label>
+                                    <span>{{ object.compartment.compartment_number|default:"N/A" }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>{% trans 'Registration Date' %}:</label>
+                                    <span>{{ object.registration_date|date:"d/m/Y" }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>{% trans 'Division' %}:</label>
+                                    <span>{{ object.get_division_display }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location Details -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="location-section">
+                                <h5 class="section-title">{% trans 'Location Details' %}</h5>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="info-item">
+                                            <label>{% trans 'District' %}:</label>
+                                            <span>{{ object.district }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="info-item">
+                                            <label>{% trans 'Taluka' %}:</label>
+                                            <span>{{ object.taluka }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="info-item">
+                                            <label>{% trans 'Village' %}:</label>
+                                            <span>{{ object.village }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Document Information Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card info-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-file-alt"></i> {% trans 'Document Information' %}</h3>
+                </div>
+                <div class="card-body">
+                    {% if object.document_file %}
+                    <!-- Document exists - show document details -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <label>{% trans 'Document Title' %}:</label>
+                                <span>{{ object.document_title|default:"-" }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <label>{% trans 'Upload Date' %}:</label>
+                                <span>{{ object.document_uploaded_at|date:"d/m/Y H:i"|default:"-" }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Document Selection Table -->
+                    {% if documents %}
+                    <div class="document-selection mt-4">
+                        <h4>{% trans 'Select Documents to Download' %}</h4>
+                        <p>{% trans 'Select individual documents from the merged file to download separately.' %}</p>
+
+                        <form method="post" action="{% url 'unmerge_selected' pk=object.pk %}">
+                            {% csrf_token %}
+                            <div class="table-responsive">
+                                <table class="table table-striped document-table">
+                                    <thead>
+                                        <tr>
+                                            <th width="5%">
+                                                <input type="checkbox" id="select-all">
+                                            </th>
+                                            <th width="60%">{% trans 'Document Name' %}</th>
+                                            <th width="25%">{% trans 'Type' %}</th>
+                                            <th width="10%">{% trans 'Pages' %}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for doc in documents %}
+                                        <tr class="document-row" style="cursor: pointer;">
+                                            <td onclick="event.stopPropagation();">
+                                                <input type="checkbox" class="document-checkbox"
+                                                       name="selected_files"
+                                                       value="{{ doc.custom_name }}"
+                                                       id="doc_{{ forloop.counter }}">
+                                            </td>
+                                            <td onclick="toggleDocumentCheckbox(this)">
+                                                <label for="doc_{{ forloop.counter }}">{{ doc.custom_name }}</label>
+                                            </td>
+                                            <td onclick="toggleDocumentCheckbox(this)">{{ doc.type }}</td>
+                                            <td onclick="toggleDocumentCheckbox(this)">{{ doc.pages }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="selection-actions mt-3">
+                                <button type="submit" id="download-selected" class="btn btn-primary btn-icon-only" data-tooltip="{% trans 'Download Selected Documents' %}" disabled>
+                                    <i class="fas fa-download"></i>
+                                    <span class="btn-text">{% trans 'Download Selected Documents' %}</span>
+                                </button>
+                                <a href="{{ object.document_file.url }}" target="_blank" class="btn btn-success btn-icon-only" data-tooltip="{% trans 'Download Full Document' %}">
+                                    <i class="fas fa-download"></i>
+                                    <span class="btn-text">{% trans 'Download Full Document' %}</span>
+                                </a>
+                                <a href="{% url 'unmerge' object.pk %}" class="btn btn-warning btn-icon-only" data-tooltip="{% trans 'Unmerge All' %}">
+                                    <i class="fas fa-file-export"></i>
+                                    <span class="btn-text">{% trans 'Unmerge All' %}</span>
+                                </a>
+                                <span id="selected-count" class="selected-count">0 {% trans 'documents selected' %}</span>
+                            </div>
+                        </form>
+                    </div>
+                    {% endif %}
+
+                    {% else %}
+                    <!-- No document exists - show upload option -->
+                    <div class="no-documents-section text-center py-5">
+                        <div class="no-documents-icon mb-3">
+                            <i class="fas fa-file-upload fa-4x text-muted"></i>
+                        </div>
+                        <h4 class="text-muted mb-3">{% trans 'No Documents Uploaded Yet' %}</h4>
+                        <p class="text-muted mb-4">{% trans 'This client has no documents uploaded. You can upload documents now.' %}</p>
+                        <div class="upload-actions">
+                            <a href="{% url 'upload_documents' object.pk %}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-upload"></i> {% trans 'Upload Documents' %}
+                            </a>
+                            <a href="{% url 'update' object.pk %}" class="btn btn-outline-secondary btn-lg">
+                                <i class="fas fa-edit"></i> {% trans 'Edit Client Details' %}
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Remarks Section -->
+    {% if object.remarks %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card info-card">
+                <div class="card-header">
+                    <h3><i class="fas fa-sticky-note"></i> {% trans 'Remarks' %}</h3>
+                </div>
+                <div class="card-body">
+                    <p>{{ object.remarks }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{% trans 'Confirm Deletion' %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>{% trans 'Are you sure you want to delete the Customer site for' %} <strong id="deleteSiteName"></strong>?</p>
+                <p class="text-danger">{% trans 'This action cannot be undone. All associated documents will also be deleted.' %}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans 'Cancel' %}</button>
+                <form id="deleteForm" method="post" action="">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">{% trans 'Delete' %}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Function to toggle document checkbox when clicking on table cells
+function toggleDocumentCheckbox(cell) {
+    const row = cell.parentElement;
+    const checkbox = row.querySelector('.document-checkbox');
+    checkbox.checked = !checkbox.checked;
+
+    // Trigger change event to update the selection count
+    const event = new Event('change');
+    checkbox.dispatchEvent(event);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Select all functionality (only if documents exist)
+    const selectAll = document.getElementById('select-all');
+    const checkboxes = document.querySelectorAll('.document-checkbox');
+    const downloadBtn = document.getElementById('download-selected');
+    const selectedCount = document.getElementById('selected-count');
+
+    if (selectAll) {
+        selectAll.addEventListener('change', function() {
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+            updateSelectionCount();
+        });
+
+        // Individual checkbox change
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateSelectionCount);
+        });
+
+        function updateSelectionCount() {
+            const checkedCount = document.querySelectorAll('.document-checkbox:checked').length;
+            if (selectedCount) {
+                selectedCount.textContent = checkedCount + ' {% trans "documents selected" %}';
+            }
+            if (downloadBtn) {
+                downloadBtn.disabled = checkedCount === 0;
+            }
+
+            // Update select all checkbox state
+            if (selectAll) {
+                selectAll.checked = checkedCount === checkboxes.length;
+                selectAll.indeterminate = checkedCount > 0 && checkedCount < checkboxes.length;
+            }
+        }
+
+        // Initialize selection count
+        updateSelectionCount();
+    }
+});
+
+// Delete functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteButtons = document.querySelectorAll('.delete-revenuesite');
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
+    const deleteForm = document.getElementById('deleteForm');
+    const deleteSiteName = document.getElementById('deleteSiteName');
+
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const siteId = this.getAttribute('data-site-id');
+            const siteName = this.getAttribute('data-site-name');
+
+            // Set the site name in the modal
+            deleteSiteName.textContent = siteName;
+
+            // Set the form action URL
+            deleteForm.action = `/revenuesite/${siteId}/delete/`;
+
+            // Show the modal
+            deleteModal.show();
+        });
+    });
+
+    // Handle form submission
+    deleteForm.addEventListener('submit', function(e) {
+        // The form will submit normally via POST
+        // Bootstrap modal will close automatically
+    });
+});
+
+</script>
+
+{% endblock %}

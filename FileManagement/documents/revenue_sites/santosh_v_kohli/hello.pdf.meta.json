@@ -1,0 +1,37 @@
+{
+  "document_info": {
+    "title": "hello ",
+    "full_name": "santosh_v_kohli",
+    "merge_date": "2025-09-27T09:41:14.599080",
+    "merged_by": "admin"
+  },
+  "files": [
+    {
+      "original_name": "QR_papukumar.png",
+      "custom_name": "aadhar",
+      "type": ".png",
+      "pages": 1,
+      "hash": "a59c0cf3c21db7abefc9c27135b4a4b3",
+      "offset": 0,
+      "length": 1
+    },
+    {
+      "original_name": "QR_papukumar.png",
+      "custom_name": "pan cad",
+      "type": ".png",
+      "pages": 1,
+      "hash": "a59c0cf3c21db7abefc9c27135b4a4b3",
+      "offset": 1,
+      "length": 1
+    },
+    {
+      "original_name": "QR_papukumar.png",
+      "custom_name": "new card",
+      "type": ".png",
+      "pages": 1,
+      "hash": "a59c0cf3c21db7abefc9c27135b4a4b3",
+      "offset": 2,
+      "length": 1
+    }
+  ]
+}

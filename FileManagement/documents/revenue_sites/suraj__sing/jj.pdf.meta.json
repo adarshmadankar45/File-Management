@@ -1,0 +1,37 @@
+{
+  "document_info": {
+    "title": "jj",
+    "full_name": "suraj__sing",
+    "merge_date": "2025-09-25T15:09:08.766704",
+    "merged_by": "admin"
+  },
+  "files": [
+    {
+      "original_name": "QR_NOKIA_WALA.png",
+      "custom_name": "Addhar",
+      "type": ".png",
+      "pages": 1,
+      "hash": "637bd8a4a89a447060e1ea3bb35b7edb",
+      "offset": 0,
+      "length": 1
+    },
+    {
+      "original_name": "map2.jpeg",
+      "custom_name": "pan",
+      "type": ".jpeg",
+      "pages": 1,
+      "hash": "2cb169b1aebaad8f6b8997fa57106407",
+      "offset": 1,
+      "length": 1
+    },
+    {
+      "original_name": "Screenshot 20.png",
+      "custom_name": "rashan",
+      "type": ".png",
+      "pages": 1,
+      "hash": "64ae0e6d16892540fc9114a538726932",
+      "offset": 2,
+      "length": 1
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{% extends 'bases.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/createmaster.css' %}">
+
+<div class="container">
+    <div class="mastercreate-card">
+        <div class="mastercreate-card-header">
+            <h2>Create New Compartment</h2>
+        </div>
+        <div class="mastercreate-card-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="mastercreate-form-group">
+                    <label for="drawer" class="mastercreate-form-label">Drawer</label>
+                    <select class="mastercreate-form-control {% if form.drawer.errors %}mastercreate-is-invalid{% endif %}"
+                            id="drawer" name="drawer" required>
+                        <option value="">Select a drawer</option>
+                        {% for drawer in drawers %}
+                            <option value="{{ drawer.pk }}">{{ drawer.drawer_number }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if form.drawer.errors %}
+                        <div class="mastercreate-alert mastercreate-alert-danger">
+                            {% for error in form.drawer.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mastercreate-form-group">
+                    <label for="compartment_number" class="mastercreate-form-label">Compartment Name/Number</label>
+                    <input type="text" class="mastercreate-form-control {% if form.compartment_number.errors %}mastercreate-is-invalid{% endif %}"
+                           id="compartment_number" name="compartment_number" required>
+                    {% if form.compartment_number.errors %}
+                        <div class="mastercreate-alert mastercreate-alert-danger">
+                            {% for error in form.compartment_number.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mastercreate-form-group">
+                    <label for="description" class="mastercreate-form-label">Description</label>
+                    <textarea class="mastercreate-form-control mastercreate-textarea"
+                              id="description" name="description" rows="3"></textarea>
+                </div>
+
+                <div class="mastercreate-btn-container">
+                    <button type="submit" class="mastercreate-btn mastercreate-btn-primary">Create Compartment</button>
+                    <a href="{% url 'search_compartments' %}" class="mastercreate-btn mastercreate-btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

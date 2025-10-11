@@ -1,0 +1,352 @@
+/* master.css - Professional styling for master list forms with icon-only buttons */
+
+:root {
+    --master-primary: #2c3e50;
+    --master-secondary: #34495e;
+    --master-accent: #7f8c8d;
+    --master-light: #f8f9fa;
+    --master-border: #e0e0e0;
+    --master-text: #333;
+    --master-text-light: #7b7b7b;
+    --master-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    --master-shadow-hover: 0 4px 15px rgba(0, 0, 0, 0.08);
+    --master-transition: all 0.25s ease;
+}
+
+/* Apply font family to all elements */
+.master-container,
+.master-header,
+.master-btn,
+.master-table,
+.master-card {
+    font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* Container and header styling */
+.master-container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 15px;
+}
+
+.master-header {
+    color: var(--master-primary);
+    font-weight: 600;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--master-border);
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.master-header::before {
+    content: '\f0c9';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 1.5rem;
+}
+
+/* Button styling */
+.master-btn {
+    border-radius: 6px;
+    font-weight: 500;
+    transition: var(--master-transition);
+    box-shadow: var(--master-shadow);
+    border: 1px solid transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    position: relative;
+    background-color: white;
+    color: var(--master-primary);
+    border: 1px solid var(--master-border);
+}
+
+.master-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--master-shadow-hover);
+}
+
+.master-btn-primary {
+    background-color: white;
+    border-color: var(--master-primary);
+    color: var(--master-primary);
+}
+
+.master-btn-primary:hover {
+    background-color: var(--master-primary);
+    border-color: var(--master-primary);
+    color: white;
+}
+
+.master-btn-primary::before {
+    content: '\f067';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 12px;
+}
+
+.master-btn-warning {
+    background-color: white;
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.master-btn-warning:hover {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+}
+
+.master-btn-warning::before {
+    content: '\f304';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 12px;
+}
+
+.master-btn-danger {
+    background-color: white;
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.master-btn-danger:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.master-btn-danger::before {
+    content: '\f1f8';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 12px;
+}
+
+.master-btn-sm {
+    width: 24px;
+    height: 24px;
+}
+
+.master-btn-sm::before {
+    font-size: 10px !important;
+}
+
+.master-mb-3 {
+    margin-bottom: 1rem !important;
+}
+
+/* Table styling */
+.master-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 30px;
+    box-shadow: var(--master-shadow);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #fff;
+    border: 1px solid var(--master-border);
+    font-size: 0.8rem;
+}
+
+.master-table thead {
+    background-color: var(--master-light);
+}
+
+.master-table th {
+    padding: 0.7rem 0.6rem;
+    text-align: left;
+    font-weight: 600;
+    color: var(--master-primary);
+    border-bottom: 2px solid var(--master-border);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.master-table td {
+    padding: 0.6rem 0.6rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--master-border);
+    color: var(--master-text);
+    font-size: 0.8rem;
+    transition: var(--master-transition);
+    height: 40px;
+}
+
+.master-table tbody tr {
+    transition: var(--master-transition);
+    height: 40px;
+}
+
+.master-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.master-table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.015);
+}
+
+.master-table tbody tr:hover td {
+    background-color: rgba(0, 0, 0, 0.01);
+}
+
+/* Button group styling */
+.master-btn-group {
+    display: flex;
+    gap: 4px;
+}
+
+/* Form styling within table */
+.master-table form {
+    margin: 0;
+    display: inline;
+}
+
+/* Empty state styling */
+.master-table tbody tr td[colspan] {
+    text-align: center;
+    padding: 20px;
+    color: var(--master-text-light);
+    font-style: italic;
+    font-size: 0.8rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .master-container {
+        margin: 15px auto;
+        padding: 0 10px;
+    }
+
+    .master-table {
+        display: block;
+        overflow-x: auto;
+        font-size: 0.75rem;
+    }
+
+    .master-btn-group {
+        flex-direction: row;
+        gap: 3px;
+    }
+
+    .master-table th,
+    .master-table td {
+        padding: 0.5rem 0.4rem;
+        font-size: 0.7rem;
+        height: 35px;
+    }
+
+    .master-table tbody tr {
+        height: 35px;
+    }
+}
+
+/* Enhanced hover effects */
+.master-table tbody tr {
+    position: relative;
+}
+
+.master-table tbody tr::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 1px;
+    background: var(--master-primary);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.master-table tbody tr:hover::after {
+    width: 95%;
+}
+
+/* Fix for long text in table cells */
+.master-table td {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.master-table td:hover {
+    overflow: visible;
+    white-space: normal;
+    background-color: rgba(0, 0, 0, 0.02) !important;
+    z-index: 1;
+    position: relative;
+}
+
+/* Card styling for consistency */
+.master-card {
+    box-shadow: var(--master-shadow);
+    border: 1px solid var(--master-border);
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    background: white;
+    transition: var(--master-transition);
+    overflow: hidden;
+}
+
+.master-card:hover {
+    box-shadow: var(--master-shadow-hover);
+}
+
+.master-card-header {
+    background-color: white;
+    border-bottom: 1px solid var(--master-border);
+    padding: 1rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.master-card-body {
+    padding: 1.25rem;
+    font-size: 0.8rem;
+}
+
+/* Tooltip for icon buttons */
+.master-btn {
+    position: relative;
+}
+
+.master-btn::after {
+    content: attr(title);
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease;
+    z-index: 1000;
+}
+
+.master-btn:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Form label styling */
+.form-label {
+    font-weight: 500;
+    color: var(--master-primary);
+    margin-bottom: 0.3rem;
+    display: block;
+    font-size: 0.75rem;
+}

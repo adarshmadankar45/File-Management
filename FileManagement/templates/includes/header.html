@@ -1,0 +1,46 @@
+{% load static %}
+{% load i18n %}  <!-- Add this line -->
+
+<nav class="navbar navbar-expand-lg fixed-top" style="background-color: #1a237e; padding: 0.8rem 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); height: 60px; z-index: 1030;">
+    <div class="container-fluid">
+      <div class="navbar-brand mb-0">
+        <strong style="color: white; font-size: 1.5rem; font-weight: 600;">File Management</strong>
+      </div>
+
+      <div class="d-flex align-items-center">
+        <ul class="navbar-nav">
+          {% if user.is_authenticated %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: white; text-decoration: none;">
+              {% if user.profile_pic %}
+              <img src="/{{user.profile_pic}}" alt="profile" style="width: 35px; height: 35px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); object-fit: cover;"/>
+              {% else %}
+              <i class="fas fa-user-circle" style="font-size: 35px; color: white;"></i>
+              {% endif %}
+              <span style="margin-left: 10px; font-size: 0.9rem;">{{user.first_name}} {{user.last_name}}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+              <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+              <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <form method="post" action="{% url 'logout' %}" class="d-inline">
+                  {% csrf_token %}
+                  <button type="submit" class="dropdown-item" style="border: none; background: none; width: 100%; text-align: left;">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                  </button>
+                </form>
+              </li>
+            </ul>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}" style="color: white;">
+              <i class="fas fa-sign-in-alt"></i> {% trans 'Login' %}
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+</nav>

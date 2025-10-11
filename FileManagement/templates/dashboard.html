@@ -1,0 +1,518 @@
+{% extends 'bases.html' %}
+{% load i18n %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'appcss/list.css' %}">
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="page-header">
+                <h1 class="h3 font-weight-bold text-primary">{% trans 'Dashboard' %}</h1>
+                <p class="text-muted">{% trans 'Overview and management of revenue sites' %}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow-sm h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                {% trans 'Total Sites' %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_sites }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-map-marked-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow-sm h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                {% trans 'With Documents' %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ sites_with_documents }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-file-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow-sm h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                {% trans 'Recent (7 days)' %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ recent_sites }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow-sm h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                {% trans 'Without Documents' %}
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ sites_without_documents }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-circle fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Sites Table -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="card-title">
+                            <i class="fas fa-history mr-2"></i>{% trans 'Recent Customer List' %}
+                        </h3>
+                        <div>
+                            <a href="{% url 'create' %}" class="btn btn-primary ml-2">
+                                <i class="fas fa-plus"></i> {% trans 'Add New Site' %}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-container">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>{% trans 'Full Name' %}</th>
+                                    <th>{% trans 'City Survey No.' %}</th>
+                                    <th>{% trans 'Plot No.' %}</th>
+                                    <th>{% trans 'Ward' %}</th>
+                                    <th>{% trans 'Drawer' %}</th>
+                                    <th>{% trans 'District' %}</th>
+                                    <th>{% trans 'Created' %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for site in recent_sites_list %}
+                                <tr>
+                                    <td>{{ site.full_name }}</td>
+                                    <td>{{ site.nagar_bhumapan_kramank }}</td>
+                                    <td>{{ site.plot_no }}</td>
+                                    <td>{{ site.ward.ward_number|default:"N/A" }}</td>
+                                    <td>{{ site.drawer.drawer_number|default:"N/A" }}</td>
+                                    <td>{{ site.district }}</td>
+                                    <td>
+                                        <span class="badge badge-light">{{ site.registration_date|date:"d/m/Y" }}</span>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8" class="text-center py-4">
+                                        <i class="fas fa-inbox fa-2x text-muted mb-2"></i>
+                                        <p class="text-muted">{% trans 'No recent sites found' %}</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-bolt mr-2"></i>{% trans 'Quick Actions' %}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <a href="{% url 'create' %}" class="btn btn-primary btn-block d-flex align-items-center justify-content-center py-3">
+                                <i class="fas fa-plus fa-2x mr-2"></i>
+                                <div class="text-left">
+                                    <div class="font-weight-bold">{% trans 'Add New Site' %}</div>
+                                    <small class="d-block">{% trans 'Create new revenue site' %}</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <a href="{% url 'list' %}" class="btn btn-info btn-block d-flex align-items-center justify-content-center py-3">
+                                <i class="fas fa-list fa-2x mr-2"></i>
+                                <div class="text-left">
+                                    <div class="font-weight-bold">{% trans 'View All Sites' %}</div>
+                                    <small class="d-block">{% trans 'Browse complete list' %}</small>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <button class="btn btn-warning btn-block d-flex align-items-center justify-content-center py-3" onclick="showPreview('all')">
+                                <i class="fas fa-qrcode fa-2x mr-2"></i>
+                                <div class="text-left">
+                                    <div class="font-weight-bold">{% trans 'Generate All QR' %}</div>
+                                    <small class="d-block">{% trans 'For all sites' %}</small>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <button class="btn btn-success btn-block d-flex align-items-center justify-content-center py-3" onclick="showClientSelection()">
+                                <i class="fas fa-users fa-2x mr-2"></i>
+                                <div class="text-left">
+                                    <div class="font-weight-bold">{% trans 'Select Clients' %}</div>
+                                    <small class="d-block">{% trans 'For QR generation' %}</small>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- QR Code Modals from list.html -->
+<!-- Preview Modal -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{% trans 'QR Code Preview' %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="previewContainer">
+                <div class="text-center py-5">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">{% trans 'Generating preview...' %}</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans 'Close' %}</button>
+                <form id="downloadForm" method="post" action="">
+                    {% csrf_token %}
+                    <div id="selectedIdsContainer"></div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-download"></i> {% trans 'Download PDF' %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Client Selection Modal -->
+<div class="modal fade" id="clientSelectionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{% trans 'Select Clients' %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th width="5%"><input type="checkbox" id="selectAll"></th>
+                            <th>{% trans 'Full Name' %}</th>
+                            <th>{% trans 'File No.' %}</th>
+                            <th>{% trans 'Document Type' %}</th>
+                            <th>{% trans 'Inward Date' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for site in sites %}
+                        <tr>
+                            <td><input type="checkbox" class="clientCheckbox" value="{{ site.pk }}"></td>
+                            <td>{{ site.full_name }}</td>
+                            <td>{{ site.file_no|default:'N/A' }}</td>
+                            <td>{{ site.document_title|default:'Revenue Site' }}</td>
+                            <td>{{ site.registration_date|date:'d-m-Y' }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="5" class="text-center">{% trans 'No revenue sites found.' %}</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans 'Cancel' %}</button>
+                <button type="button" class="btn btn-primary" onclick="previewSelectedClients()">
+                    {% trans 'Preview Selected' %}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- QR Code Modal -->
+<div class="modal fade" id="qrCodeModal" tabindex="-1" aria-labelledby="qrCodeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="qrCodeModalLabel">{% trans 'QR Code' %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="qrCodeImage" src="" class="img-fluid mb-3" style="max-width: 200px;">
+                <div id="qrCodeData" class="text-start small">
+                    <!-- Data will be inserted here -->
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button id="downloadQrBtn" type="button" class="btn btn-primary btn-sm">
+                    <i class="fas fa-download"></i> {% trans 'Download QR' %}
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> {% trans 'Close' %}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+// QR Code functionality from list.html
+document.addEventListener('DOMContentLoaded', function() {
+    const qrButtons = document.querySelectorAll('.show-qr-code');
+    let currentQrCodeData = '';
+    let currentSiteName = '';
+
+    qrButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            currentSiteName = this.getAttribute('data-site-name');
+            const documentUrl = this.getAttribute('data-document-url');
+            const fileNo = this.getAttribute('data-file-no');
+            const docType = this.getAttribute('data-doc-type');
+            const inward = this.getAttribute('data-inward');
+            const ward = this.getAttribute('data-ward');
+            const drawer = this.getAttribute('data-drawer');
+            const compartment = this.getAttribute('data-compartment');
+
+            // Format the data for QR code
+            currentQrCodeData = `FILE NO: ${fileNo}\nCLIENT: ${currentSiteName}\nDOC TYPE: ${docType}\nDRAWER: ${drawer}\nINWARD: ${inward}\nLINK: ${window.location.origin}${documentUrl}`;
+
+            // Format the data for display
+            const displayData = `
+                <div class="mb-1"><strong>FILE NO:</strong> ${fileNo}</div>
+                <div class="mb-1"><strong>CLIENT:</strong> ${currentSiteName}</div>
+                <div class="mb-1"><strong>DOC TYPE:</strong> ${docType}</div>
+                <div class="mb-1"><strong>WARD:</strong> ${ward}</div>
+                <div class="mb-1"><strong>DRAWER:</strong> ${drawer}</div>
+                <div class="mb-1"><strong>COMPARTMENT:</strong> ${compartment}</div>
+                <div class="mb-1"><strong>INWARD:</strong> ${inward}</div>
+                <div class="mb-1"><strong>LINK:</strong> <span class="text-truncate d-inline-block" style="max-width: 180px;">${documentUrl}</span></div>
+            `;
+
+            const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(currentQrCodeData)}`;
+
+            document.getElementById('qrCodeModalLabel').textContent = `QR Code - ${currentSiteName}`;
+            document.getElementById('qrCodeImage').src = qrCodeUrl;
+            document.getElementById('qrCodeData').innerHTML = displayData;
+
+            const modal = new bootstrap.Modal(document.getElementById('qrCodeModal'));
+            modal.show();
+        });
+    });
+
+    // Download QR code functionality
+    document.getElementById('downloadQrBtn').addEventListener('click', async function() {
+        if (!currentQrCodeData) return;
+
+        try {
+            const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(currentQrCodeData)}`;
+            const response = await fetch(qrCodeUrl);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `QR_${currentSiteName.replace(/[^a-z0-9]/gi, '_')}.png`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (error) {
+            console.error('Error downloading QR code:', error);
+            alert('Failed to download QR code. Please try again.');
+        }
+    });
+});
+
+// QR Code generation functions from list.html
+function showClientSelection() {
+    const modal = new bootstrap.Modal(document.getElementById('clientSelectionModal'));
+    modal.show();
+}
+
+function showPreview(type) {
+    const previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
+    previewModal.show();
+
+    // Show loading state
+    document.getElementById('previewContainer').innerHTML = `
+        <div class="text-center py-5">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">{% trans 'Generating preview...' %}</p>
+        </div>
+    `;
+
+    // Set up download form
+    document.getElementById('downloadForm').action = type === 'all'
+        ? "{% url 'generate_all_qr_pdf' %}"
+        : "{% url 'generate_selected_qr_pdf' %}";
+
+    // Clear previous selections
+    document.getElementById('selectedIdsContainer').innerHTML = '';
+
+    // Fetch preview data
+    fetch(`/get-qr-preview-data/?type=${type}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.previews && data.previews.length > 0) {
+                renderPreview(data.previews);
+            } else {
+                document.getElementById('previewContainer').innerHTML = `
+                    <div class="alert alert-warning text-center">
+                        {% trans 'No clients found to generate QR codes.' %}
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('previewContainer').innerHTML = `
+                <div class="alert alert-danger text-center">
+                    {% trans 'Error generating preview. Please try again.' %}
+                </div>
+            `;
+        });
+}
+
+function renderPreview(previews) {
+    let html = `
+        <div class="alert alert-info mb-3">
+            <i class="fas fa-info-circle"></i>
+            {% trans 'This preview shows what will be included in the PDF. Each client will have their own page.' %}
+        </div>
+        <div class="row">
+    `;
+
+    previews.forEach(preview => {
+        html += `
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h6>${preview.name}</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-5 text-center">
+                            <img src="${preview.image}" class="img-fluid" style="max-width: 200px;">
+                        </div>
+                        <div class="col-md-7">
+                            <div style="white-space: pre-wrap; font-family: monospace; font-size: 0.9rem;">
+                                ${preview.data.replace(/\n/g, '<br>')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+    });
+
+    html += `</div>`;
+    document.getElementById('previewContainer').innerHTML = html;
+}
+
+function previewSelectedClients() {
+    const selected = Array.from(document.querySelectorAll('.clientCheckbox:checked'))
+        .map(checkbox => checkbox.value);
+
+    if (selected.length === 0) {
+        alert('Please select at least one client');
+        return;
+    }
+
+    // Set hidden inputs for download form
+    const container = document.getElementById('selectedIdsContainer');
+    container.innerHTML = '';
+    selected.forEach(id => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'selected_sites';
+        input.value = id;
+        container.appendChild(input);
+    });
+
+    // Close selection modal
+    const clientModal = bootstrap.Modal.getInstance(document.getElementById('clientSelectionModal'));
+    clientModal.hide();
+
+    // Show preview modal
+    const previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
+    previewModal.show();
+
+    document.getElementById('previewContainer').innerHTML = `
+        <div class="text-center py-5">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">{% trans 'Generating preview...' %}</p>
+        </div>
+    `;
+
+    document.getElementById('downloadForm').action = "{% url 'generate_selected_qr_pdf' %}";
+
+    // Fetch preview data
+    fetch(`/get-qr-preview-data/?ids=${selected.join(',')}`)
+        .then(response => response.json())
+        .then(data => renderPreview(data.previews));
+}
+
+// Select all checkbox
+document.getElementById('selectAll').addEventListener('change', function() {
+    document.querySelectorAll('.clientCheckbox').forEach(checkbox => {
+        checkbox.checked = this.checked;
+    });
+});
+</script>
+{% endblock %}

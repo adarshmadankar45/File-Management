@@ -1,0 +1,73 @@
+{% extends 'bases.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/createmaster.css' %}">
+
+<div class="container">
+    <div class="mastercreate-card">
+        <div class="mastercreate-card-header">
+            <h2>Update Ward: {{ object.ward_name }}</h2>
+        </div>
+        <div class="mastercreate-card-body">
+            <!-- Display form-level errors -->
+            {% if form.non_field_errors %}
+                <div class="mastercreate-alert mastercreate-alert-danger">
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="mastercreate-form-group">
+                    <label for="ward_name" class="mastercreate-form-label">Ward Name</label>
+                    <input type="text" class="mastercreate-form-control {% if form.ward_name.errors %}mastercreate-is-invalid{% endif %}"
+                           id="ward_name" name="ward_name"
+                           value="{{ form.ward_name.value|default:object.ward_name }}" required>
+                    {% if form.ward_name.errors %}
+                        <div class="mastercreate-invalid-feedback">
+                            {% for error in form.ward_name.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mastercreate-form-group">
+                    <label for="ward_number" class="mastercreate-form-label">Ward Number</label>
+                    <input type="text" class="mastercreate-form-control {% if form.ward_number.errors %}mastercreate-is-invalid{% endif %}"
+                           id="ward_number" name="ward_number"
+                           value="{{ form.ward_number.value|default:object.ward_number }}" required>
+                    {% if form.ward_number.errors %}
+                        <div class="mastercreate-invalid-feedback">
+                            {% for error in form.ward_number.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mastercreate-form-group">
+                    <label for="description" class="mastercreate-form-label">Description</label>
+                    <textarea class="mastercreate-form-control mastercreate-textarea {% if form.description.errors %}mastercreate-is-invalid{% endif %}"
+                              id="description" name="description" rows="3">{{ form.description.value|default:object.description }}</textarea>
+                    {% if form.description.errors %}
+                        <div class="mastercreate-invalid-feedback">
+                            {% for error in form.description.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mastercreate-btn-container">
+                    <button type="submit" class="mastercreate-btn mastercreate-btn-primary">Save</button>
+                    <a href="{% url 'search_ward' %}" class="mastercreate-btn mastercreate-btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
