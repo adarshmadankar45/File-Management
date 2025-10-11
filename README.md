@@ -158,6 +158,3 @@ This system digitizes the manual file management process — allowing users to s
 📞 *Available for freelance & project collaborations*
 🔗 GitHub: [adarshmadankar45](https://github.com/adarshmadankar45)
 
----
-
-Would you like me to include **installation and setup steps** (commands to run, migrations, superuser creation, etc.) so the README looks more complete for GitHub?
